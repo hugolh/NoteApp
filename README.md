@@ -1,4 +1,4 @@
-# Personnal project for personal use
+# Personal project for personal use
 
 ## Contains or will contains
 ### 1
