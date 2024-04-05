@@ -12,7 +12,6 @@ struct CalendarSelectorView: View {
     @State private var selectedMonth: Int = Calendar.current.component(.month, from: Date())
     let notes: [Note]
 
-    // Définir les plages pour les années et les mois
     let years: [Int] = Array(2020...2024)
     let months: [Int] = Array(1...12)
 

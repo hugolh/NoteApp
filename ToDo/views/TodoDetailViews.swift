@@ -8,26 +8,21 @@
 import SwiftUI
 
 struct TodoDetailView: View {
-    @Binding var note: Note // Modifier pour @Binding si la modification doit être reflétée à l'extérieur
-
-    // Pour des tests locaux, on utilise @State
-    // @State private var title: String = ""
-    // @State private var content: String = ""
-
+    @Binding var note: Note
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            TextField("Titre", text: $note.title) // Liaison directe au titre du todo
+            TextField("Titre", text: $note.title)
                 .font(.title)
             
             Text(formatDate(note.date))
                 .font(.subheadline)
                 .foregroundColor(.gray)
             
-            // Utilisation de TextEditor pour le contenu pour permettre le texte multiligne
             TextEditor(text: Binding<String>(
-                get: { self.note.content ?? "" }, // Fournit une chaîne vide si `todo.content` est nil
+                get: { self.note.content ?? "" },
                 set: { self.note.content = $0 }
-            )) // Liaison directe au contenu du todo
+            ))
                 .padding()
                 .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.gray, lineWidth: 1))
         }

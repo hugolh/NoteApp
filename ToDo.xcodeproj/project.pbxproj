@@ -12,12 +12,12 @@
 		704EB9F42BAB4E5F0042551D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 704EB9F32BAB4E5F0042551D /* Assets.xcassets */; };
 		704EB9F72BAB4E5F0042551D /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 704EB9F62BAB4E5F0042551D /* Preview Assets.xcassets */; };
 		7096D73B2BB1C4F3002C19C4 /* SecretNoteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7096D73A2BB1C4F3002C19C4 /* SecretNoteDetailView.swift */; };
+		70A9886C2BC083BA00D47EC5 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70A9886B2BC083BA00D47EC5 /* Utils.swift */; };
 		70E878402BB1D8D400A51F1B /* NotesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70E8783F2BB1D8D400A51F1B /* NotesView.swift */; };
 		70E878422BB1E78100A51F1B /* AddSecretNote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70E878412BB1E78100A51F1B /* AddSecretNote.swift */; };
 		70F492632BB1BB30007C1D4E /* SecretView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70F492622BB1BB30007C1D4E /* SecretView.swift */; };
 		70F492652BB1BB5B007C1D4E /* SecretNoteModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70F492642BB1BB5B007C1D4E /* SecretNoteModel.swift */; };
 		70F492672BB1BC98007C1D4E /* AuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70F492662BB1BC98007C1D4E /* AuthView.swift */; };
-		70FB50A52BAB571D007519B8 /* PersistanceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70FB50A42BAB571D007519B8 /* PersistanceController.swift */; };
 		70FB50BF2BAB675A007519B8 /* TodoDetailViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70FB50BE2BAB675A007519B8 /* TodoDetailViews.swift */; };
 		70FB50C12BAB6778007519B8 /* todo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70FB50C02BAB6777007519B8 /* todo.swift */; };
 		70FB50C42BAB70F5007519B8 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70FB50C32BAB70F4007519B8 /* CalendarView.swift */; };
@@ -32,12 +32,12 @@
 		704EB9F32BAB4E5F0042551D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		704EB9F62BAB4E5F0042551D /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		7096D73A2BB1C4F3002C19C4 /* SecretNoteDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecretNoteDetailView.swift; sourceTree = "<group>"; };
+		70A9886B2BC083BA00D47EC5 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		70E8783F2BB1D8D400A51F1B /* NotesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesView.swift; sourceTree = "<group>"; };
 		70E878412BB1E78100A51F1B /* AddSecretNote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddSecretNote.swift; sourceTree = "<group>"; };
 		70F492622BB1BB30007C1D4E /* SecretView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecretView.swift; sourceTree = "<group>"; };
 		70F492642BB1BB5B007C1D4E /* SecretNoteModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecretNoteModel.swift; sourceTree = "<group>"; };
 		70F492662BB1BC98007C1D4E /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
-		70FB50A42BAB571D007519B8 /* PersistanceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistanceController.swift; sourceTree = "<group>"; };
 		70FB50BE2BAB675A007519B8 /* TodoDetailViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoDetailViews.swift; sourceTree = "<group>"; };
 		70FB50C02BAB6777007519B8 /* todo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = todo.swift; sourceTree = "<group>"; };
 		70FB50C32BAB70F4007519B8 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
@@ -80,7 +80,7 @@
 				704EB9EF2BAB4E5C0042551D /* ToDoApp.swift */,
 				704EB9F32BAB4E5F0042551D /* Assets.xcassets */,
 				704EB9F52BAB4E5F0042551D /* Preview Content */,
-				70FB50A42BAB571D007519B8 /* PersistanceController.swift */,
+				70A9886B2BC083BA00D47EC5 /* Utils.swift */,
 			);
 			path = ToDo;
 			sourceTree = "<group>";
@@ -194,6 +194,7 @@
 				70E878402BB1D8D400A51F1B /* NotesView.swift in Sources */,
 				70E878422BB1E78100A51F1B /* AddSecretNote.swift in Sources */,
 				70FB50C42BAB70F5007519B8 /* CalendarView.swift in Sources */,
+				70A9886C2BC083BA00D47EC5 /* Utils.swift in Sources */,
 				70F492672BB1BC98007C1D4E /* AuthView.swift in Sources */,
 				704EB9F22BAB4E5C0042551D /* ContentView.swift in Sources */,
 				7096D73B2BB1C4F3002C19C4 /* SecretNoteDetailView.swift in Sources */,
@@ -202,7 +203,6 @@
 				704EB9F02BAB4E5C0042551D /* ToDoApp.swift in Sources */,
 				70FB50C12BAB6778007519B8 /* todo.swift in Sources */,
 				70F492652BB1BB5B007C1D4E /* SecretNoteModel.swift in Sources */,
-				70FB50A52BAB571D007519B8 /* PersistanceController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

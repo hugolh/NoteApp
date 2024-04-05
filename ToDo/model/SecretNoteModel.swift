@@ -10,7 +10,7 @@ import Foundation
 
 
 
-struct SecretNoteModel: Identifiable, Hashable {
+struct SecretNoteModel: Identifiable, Codable, Hashable {
     let id: UUID
     let title: String
     let date: Date

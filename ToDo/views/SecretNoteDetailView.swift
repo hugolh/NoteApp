@@ -7,30 +7,51 @@
 
 import Foundation
 import SwiftUI
+import CryptoKit
+
 
 struct SecretNoteDetailView: View {
     var secret: SecretNoteModel
+    @State private var displayedText: String
+    
+    init(secret: SecretNoteModel) {
+        self.secret = secret
+        _displayedText = State(initialValue: secret.content ?? "") 
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text(secret.title)
-                .font(.title)
-            Text(formatDate(secret.date))
-                .font(.subheadline)
-                .foregroundColor(.gray)
-            if(secret.content != nil){
-                Text(secret.content!)
+            if let content = secret.content {
+                Text(displayedText)
+                Button(action: {
+                  
+                    displayedText = decrypt(content: content) ?? "Erreur de décryptage"
+                }) {
+                    Image(systemName: "eye.slash")
+                }
             }
-          
         }
         .padding()
-        .navigationTitle("Secret Note Details")
+        .navigationTitle("\(secret.title)")
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                VStack {
+                    Text(formatDate(secret.date))
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                }
+            }
+        }
     }
 
+    
     private func formatDate(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         formatter.timeStyle = .short
         return formatter.string(from: date)
     }
+    
+    
 }
+

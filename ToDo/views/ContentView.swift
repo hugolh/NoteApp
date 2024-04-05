@@ -10,16 +10,16 @@ struct ContentView: View {
     @State private var searchText: String = ""
      @State private var hideEmpty: Bool = false
      @State private var showCalendar: Bool = false
+     let newNote = Note(id: UUID(), title: "", date: Date(), content: "")
+   
 
      var body: some View {
          TabView {
-             // Premier onglet
-             NotesView()
+          /*   NotesView(selectedNote: newNote)
                  .tabItem {
                      Label("Notes", systemImage: "note.text")
                  }
-
-             // Second onglet
+*/
              AuthView()
                  .tabItem {
                      Label("Notes Secrètes", systemImage: "lock.doc")
