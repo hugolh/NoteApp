@@ -8,41 +8,40 @@
 import SwiftUI
 
 struct CalendarView: View {
-    @State private var selectedDate: Date = Date()
-    @State private var showingDetail: Bool = false
-    let startDate: Date = Calendar.current.date(byAdding: .year, value: -1, to: Date()) ?? Date()
-    let endDate: Date = Date()
-    let todos: [Todo]
+    let notes: [Note]
+    let year: Int
+    let month: Int
 
     var body: some View {
-        VStack {
-            DatePicker("Select a Date", selection: $selectedDate, in: startDate...endDate, displayedComponents: .date)
-                .datePickerStyle(GraphicalDatePickerStyle())
-                .onChange(of: selectedDate) { newValue in
-                    showingDetail = true
-                }
-                .padding()
+        let daysInMonth = 30
+        let days = 1...daysInMonth
 
-            Spacer()
-        }
-        .sheet(isPresented: $showingDetail) {
-            if let todoForDate = todos.first(where: { Calendar.current.isDate($0.date, inSameDayAs: selectedDate) }) {
-                TodoDetailView(todo: todoForDate)
-            } else {
-                Text("No Todo for this date").padding()
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 7)) {
+            ForEach(days, id: \.self) { day in
+                let dayHasNote = notes.contains(where: { note in
+                    let noteDay = Calendar.current.component(.day, from: note.date)
+                    let noteMonth = Calendar.current.component(.month, from: note.date)
+                    let noteYear = Calendar.current.component(.year, from: note.date)
+                    return day == noteDay && month == noteMonth && year == noteYear
+                })
+
+                DayView(day: day, hasNote: dayHasNote)
             }
         }
-        .navigationTitle("Calendar")
     }
 }
+
+
+
 
 
 struct CalendarView_Previews: PreviewProvider {
     static var previews: some View {
-        let sampleTodos: [Todo] = [ ]
+        let sampleNote: [Note] = [ ]
         
         NavigationView {
-            CalendarView(todos: sampleTodos)
+            CalendarView(notes: sampleNote, year: 2023,month:07 )
         }
     }
 }
+
