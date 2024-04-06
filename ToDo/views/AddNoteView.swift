@@ -14,43 +14,54 @@ struct AddNote: View {
     @State private var notes: [Note] = []
     @State private var title: String = ""
     @State private var content: String = ""
+    @State private var isStar: Bool = false
     @Environment(\.presentationMode) var presentationMode
 
     var body: some View {
-        NavigationView {
-            Form {
-                TextField("Titre", text: $title)
-                TextEditor(text: $content)
-                    .frame(height: 200)
-            }
-            .navigationTitle("Ajouter une note")
-            .navigationBarItems(leading: Button("Annuler") {
-                presentationMode.wrappedValue.dismiss()
-            }, trailing: Button("Sauvegarder") {
-                let newNote = Note(id: UUID(), title: title, date: Date(), content: content)
-                notes.append(newNote)
-                saveNoteAsJson(note: newNote)
-                presentationMode.wrappedValue.dismiss()
-            })
-        }
-    }
+           NavigationView {
+               Form {
+                   Section(header: Text("Note Details")) {
+                       TextField("Title", text: $title)
+                       TextEditor(text: $content)
+                           .frame(height: 200)
+                   }
+                   
+                   Section {
+                       Button(action: {
+                           isStar.toggle()
+                       }) {
+                           HStack {
+                               Text("Star Note")
+                               Spacer()
+                               Image(systemName: isStar ? "star.fill" : "star")
+                                   .foregroundColor(isStar ? .yellow : .gray)
+                           }
+                       }
+                   }
+               }
+               .navigationBarTitle("Add a Note", displayMode: .inline)
+               .navigationBarItems(leading: Button("Cancel") {
+                   presentationMode.wrappedValue.dismiss()
+               }, trailing: Button("Save") {
+                   saveNoteAsJson()
+               })
+           }
+       }
+       
     
-    func saveNoteAsJson(note: Note) {
-        guard let content = note.content else {
-            print("La note est vide, rien à hacher.")
-            return
-        }
+    func saveNoteAsJson() {
         
-        guard let contentData = content.data(using: .utf8) else {
+        guard content.data(using: .utf8) != nil else {
             print("Erreur lors de la conversion du contenu en Data.")
             return
         }
         
-        let newNote = Note(id: note.id, title: note.title, date: note.date, content:  note.content ??  "")
+        let newNote = Note(id: UUID(), title: title, date: Date(), content: content, isStar: isStar)
+          
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyyMMdd_HHmmss"
-        let dateString = dateFormatter.string(from: note.date)
-        let fileName = "\(dateString)_\("".prefix(8)).json"
+        let dateString = dateFormatter.string(from: Date())
+        let fileName = "\(dateString).json"
         
         if let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
             let fileURL = documentsDirectory.appendingPathComponent(fileName)
@@ -62,6 +73,7 @@ struct AddNote: View {
                 print("Erreur lors de la sauvegarde de la note : \(error)")
             }
         }
-    }
+        presentationMode.wrappedValue.dismiss()
+          }
 
 }

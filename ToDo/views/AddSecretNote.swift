@@ -39,7 +39,7 @@ struct AddSecretNote: View {
             return
         }
         
-        guard let contentData = content.data(using: .utf8) else {
+        guard content.data(using: .utf8) != nil else {
             print("Erreur lors de la conversion du contenu en Data.")
             return
         }
@@ -48,7 +48,7 @@ struct AddSecretNote: View {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyyMMdd_HHmmss"
         let dateString = dateFormatter.string(from: note.date)
-        let fileName = "\(dateString)_\("".prefix(8))_secret.json"
+        let fileName = "\(dateString)_secret.json"
         
         if let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
             let fileURL = documentsDirectory.appendingPathComponent(fileName)

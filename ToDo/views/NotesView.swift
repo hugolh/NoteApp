@@ -12,7 +12,7 @@ import LocalAuthentication
 struct NotesView: View {
     @State private var notes = [Note]()
     @State private var searchText = ""
-    
+
     private var filteredNotes: [Note] {
         if searchText.isEmpty {
             return notes
@@ -20,72 +20,89 @@ struct NotesView: View {
             return notes.filter { $0.content?.contains(searchText) ?? false }
         }
     }
+
+    private var starredNotes: [Note] {
+        filteredNotes.filter { $0.isStar ?? false }
+    }
     
+    private var nonStarredNotes: [Note] {
+        filteredNotes.filter { !($0.isStar ?? false) }
+    }
+
     var body: some View {
-        NavigationView {
-            List {
-                ForEach(filteredNotes, id: \.self) { note in
-                    NavigationLink(destination: TodoDetailView(note: note)) {
-                        HStack(alignment: .center) {
-                            VStack(alignment: .leading) {
-                                Text(formatDate(note.date))
-                              
-                                Text(note.content.map { $0.count > 10 ? String($0.prefix(10)) + "..." : $0 } ?? "")
-                                                .font(.subheadline).foregroundColor(.gray)
+        TabView {
+                    NavigationView {
+                        List {
+                            ForEach(nonStarredNotes, id: \.self) { note in
+                                NavigationLink(destination: TodoDetailView(note: note)) {
+                                    NoteRow(note: note)
+                                }
                             }
-                            Spacer()
+                            .onDelete(perform: deleteNote)
+                        }
+                        .onAppear {
+                            notes = loadAllNotes()
+                        }
+                        .navigationTitle("Note List")
+                        .toolbar {
+                            ToolbarItem(placement: .navigationBarTrailing) {
+                                NavigationLink(destination: AddNote()){
+                                    Image(systemName: "plus.app")
+                                }
+                            }
                         }
                     }
-                }
-                .onDelete(perform: deleteNote)
-            }
-            .onAppear {
-                notes = loadAllNotes()
-            }
-            .padding(.top)
-            .navigationTitle("Note List")
-            .searchable(text: $searchText, prompt: "Search Notes")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    NavigationLink(destination: AddNote()){
-                        Image(systemName: "plus.app")
+                    .tabItem {
+                        Label("", systemImage: "list.bullet")
                     }
+            
+            NavigationView {
+                List {
+                    ForEach(starredNotes, id: \.self) { note in
+                        NavigationLink(destination: TodoDetailView(note: note)) {
+                            NoteRow(note: note)
+                        }
+                    }
+                    .onDelete(perform: deleteNote)
                 }
+                .navigationTitle("Starred Notes")
+            }
+            .tabItem {
+                Label("", systemImage: "star.fill")
             }
         }
     }
     
-    private func formatDate(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .short
-        return formatter.string(from: date)
-    }
+
     
     func loadAllNotes() -> [Note] {
         var notes: [Note] = []
-        
+
         let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        
+
         do {
             let fileURLs = try FileManager.default.contentsOfDirectory(at: documentsDirectory, includingPropertiesForKeys: nil)
-            
+
             let jsonFiles = fileURLs.filter { $0.pathExtension == "json" && !$0.lastPathComponent.contains("secret") }
-            
+
             for fileURL in jsonFiles {
                 let data = try Data(contentsOf: fileURL)
-                
+
                 let decoder = JSONDecoder()
-                
+
                 if let note = try? decoder.decode(Note.self, from: data) {
                     notes.append(note)
                 }
             }
         } catch {
-            print("Erreur lors du chargement des notes secrètes: \(error)")
+            print("Erreur lors du chargement des notes: \(error)")
         }
+
+        notes.sort { $0.date > $1.date }
+
         return notes
     }
+
 
     
     func deleteNote(at offsets: IndexSet) {
@@ -116,5 +133,27 @@ struct NotesView: View {
 struct NotesView_Previews: PreviewProvider {
     static var previews: some View {
         NotesView()
+    }
+}
+
+
+struct NoteRow: View {
+    let note: Note
+    
+    var body: some View {
+        HStack(alignment: .center) {
+            VStack(alignment: .leading) {
+                Text(note.title)
+                Text(formatDate(note.date))
+                    .font(.subheadline).foregroundColor(.gray)
+            }
+            Spacer()
+        }
+    }
+    private func formatDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        return formatter.string(from: date)
     }
 }
