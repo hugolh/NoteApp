@@ -9,6 +9,11 @@ import SwiftUI
 
 @main
 struct ToDoApp: App {
+    init() {
+        if UserDefaults.standard.data(forKey: "encryptionKey") == nil {
+            generateAndStoreKey()
+        }
+    }
     var body: some Scene {
         WindowGroup {
             ContentView()

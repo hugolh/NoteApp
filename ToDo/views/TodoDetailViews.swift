@@ -26,12 +26,11 @@ struct TodoDetailView: View {
                 .font(.title)
                 .textFieldStyle(.roundedBorder)
             
-            TextField("Content", text: Binding<String>(
-                get: { content ?? "" },
-                set: { content = $0.isEmpty ? nil : $0 }
-            ))
-            .textFieldStyle(.roundedBorder)
-            
+            TextEditor(text: Binding<String>(get: { content ?? "" }, set: { content = $0 }))
+                    .frame(minHeight: 200)
+                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.gray, lineWidth: 1)) 
+                    .padding(.bottom, 20)
+                
             Spacer()
             
             Button(action: {
@@ -72,7 +71,6 @@ struct TodoDetailView: View {
     private func saveNote() {
         let updatedNote = Note(id: note.id, title: title, date: note.date, content: content, isStar: isStar)
           
-           
            saveNoteToFile(note: updatedNote)
        }
        

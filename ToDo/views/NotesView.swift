@@ -17,7 +17,7 @@ struct NotesView: View {
         if searchText.isEmpty {
             return notes
         } else {
-            return notes.filter { $0.content?.contains(searchText) ?? false }
+            return notes.filter { $0.content?.lowercased().contains(searchText.lowercased()) ?? false }
         }
     }
 
@@ -31,48 +31,42 @@ struct NotesView: View {
 
     var body: some View {
         TabView {
-                    NavigationView {
-                        List {
-                            ForEach(nonStarredNotes, id: \.self) { note in
-                                NavigationLink(destination: TodoDetailView(note: note)) {
-                                    NoteRow(note: note)
-                                }
-                            }
-                            .onDelete(perform: deleteNote)
-                        }
-                        .onAppear {
-                            notes = loadAllNotes()
-                        }
-                        .navigationTitle("Note List")
-                        .toolbar {
-                            ToolbarItem(placement: .navigationBarTrailing) {
-                                NavigationLink(destination: AddNote()){
-                                    Image(systemName: "plus.app")
-                                }
-                            }
-                        }
-                    }
-                    .tabItem {
-                        Label("", systemImage: "list.bullet")
-                    }
-            
-            NavigationView {
-                List {
-                    ForEach(starredNotes, id: \.self) { note in
-                        NavigationLink(destination: TodoDetailView(note: note)) {
-                            NoteRow(note: note)
-                        }
-                    }
-                    .onDelete(perform: deleteNote)
+            notesListView(notes: nonStarredNotes, title: "Note List")
+                .tabItem {
+                    Label("Notes", systemImage: "list.bullet")
                 }
-                .navigationTitle("Starred Notes")
+            
+            notesListView(notes: starredNotes, title: "Starred Notes")
+                .tabItem {
+                    Label("Starred", systemImage: "star.fill")
+                }
+        }
+        .searchable(text: $searchText)
+        .onAppear {
+            notes = loadAllNotes()
+        }
+    }
+
+    private func notesListView(notes: [Note], title: String) -> some View {
+        NavigationView {
+            List {
+                ForEach(notes, id: \.self) { note in
+                    NavigationLink(destination: TodoDetailView(note: note)) {
+                        NoteRow(note: note)
+                    }
+                }
+                .onDelete(perform: deleteNote)
             }
-            .tabItem {
-                Label("", systemImage: "star.fill")
+            .navigationTitle(title)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    NavigationLink(destination: AddNote()) {
+                        Image(systemName: "plus.app")
+                    }
+                }
             }
         }
     }
-    
 
     
     func loadAllNotes() -> [Note] {

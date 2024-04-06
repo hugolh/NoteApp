@@ -38,6 +38,11 @@ func encrypt(content: String) -> String? {
         return nil
     }
     
+    guard let key = retrieveKey() else {
+        print("Erreur lors de la récupération de la clé.")
+        return nil
+    }
+    
     do {
         let sealedBox = try AES.GCM.seal(contentData, using: key)
         return sealedBox.combined?.hexEncodedString()
@@ -47,9 +52,15 @@ func encrypt(content: String) -> String? {
     }
 }
 
+
 func decrypt(content: String) -> String? {
     guard let data = Data(hexString: content) else {
         print("Erreur lors de la conversion de la chaîne hexadécimale en Data.")
+        return nil
+    }
+    
+    guard let key = retrieveKey() else {
+        print("Erreur lors de la récupération de la clé.")
         return nil
     }
     
@@ -61,4 +72,20 @@ func decrypt(content: String) -> String? {
         print("Erreur lors du décryptage: \(error)")
         return nil
     }
+}
+
+
+
+func generateAndStoreKey() {
+    let key = SymmetricKey(size: .bits256)
+    let keyData = key.withUnsafeBytes {
+        return Data(Array($0))
+    }
+    UserDefaults.standard.set(keyData, forKey: "encryptionKey")
+}
+
+
+func retrieveKey() -> SymmetricKey? {
+    guard let keyData = UserDefaults.standard.data(forKey: "encryptionKey") else { return nil }
+    return SymmetricKey(data: keyData)
 }
