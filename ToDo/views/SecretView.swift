@@ -11,37 +11,48 @@ import LocalAuthentication
 
 struct SecretView: View {
     @State private var secretNotes = [SecretNoteModel]()
-     var body: some View {
-         NavigationView {
-             List {
-                    ForEach(secretNotes, id: \.self) { secret in
-                        NavigationLink(destination: SecretNoteDetailView(secret: secret)) {
-                            HStack(alignment: .center) {
-                                VStack(alignment: .leading) {
-                                    Text(secret.title)
-                                        .font(.title2)
-                                }
-                                Spacer()
+    @State private var searchText = ""
+
+    var body: some View {
+        NavigationView {
+            List {
+                ForEach(filteredSecretNotes, id: \.self) { secret in
+                    NavigationLink(destination: SecretNoteDetailView(secret: secret)) {
+                        HStack(alignment: .center) {
+                            VStack(alignment: .leading) {
+                                Text(secret.title)
+                                    .font(.title2)
                             }
+                            Spacer()
                         }
                     }
-                    .onDelete(perform: deleteSecretNote)
                 }
-                .onAppear {
-                    secretNotes = loadAllSecretNotes()
+                .onDelete(perform: deleteSecretNote)
+            }
+            .onAppear {
+                secretNotes = loadAllSecretNotes()
+            }
+            .padding(.top)
+            .navigationTitle("Secret Note List")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    NavigationLink(destination: AddSecretNote()){
+                        Image(systemName: "plus.app")
+                    }
                 }
-             .padding(.top)
-             .navigationTitle("Secret Note List")
-            
-             .toolbar {
-                 ToolbarItem(placement: .navigationBarTrailing) {
-                     NavigationLink(destination: AddSecretNote()){
-                             Image(systemName: "plus.app")
-                         }
-                 }
-             }
-         }
-     }
+            }
+            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always))
+        }
+    }
+
+    var filteredSecretNotes: [SecretNoteModel] {
+        if searchText.isEmpty {
+            return secretNotes
+        } else {
+            return secretNotes.filter { $0.title.lowercased().contains(searchText.lowercased()) }
+        }
+    }
+
     
     
     func loadAllSecretNotes() -> [SecretNoteModel] {
