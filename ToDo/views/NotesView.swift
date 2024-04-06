@@ -7,101 +7,101 @@
 
 import Foundation
 import SwiftUI
+import LocalAuthentication
 
-struct NotesView: View { 
-    @State private var newNote = Note(id: UUID(), title: "", date: Date(), content: "")
-    @State private var searchText: String = ""
-     @State private var hideEmpty: Bool = false
-     @State private var showCalendar: Bool = false
-    @State private var selectedNote: Note
-    @State private var notes: [Note] = []
-
-    
+struct NotesView: View {
+    @State private var notes = [Note]()
      var body: some View {
          NavigationView {
              List {
-                 if(!isNotesTodays()){
-                     NavigationLink(destination: TodoDetailView(note: $newNote)) {
-                        
-                         Text("Pas encore de note aujourd'hui")
-                     }
-                     
-                     Divider()
-                 } else{
-                     
-                     NavigationLink(destination: TodoDetailView(note: $selectedNote ?? $newNote)) {
-                         
-                         HStack(alignment: .center) {
-                             VStack(alignment: .leading) {
-                                 Text(formatDate(notesForToday().date))
-                                     .font(.title2)
-                             }
-                            
-                         }
-                     }  .onAppear {
-                         selectedNote = notesForToday()
-                     }
-                 }
-
-                 ForEach(Array(notes.enumerated()), id: \.element.id) { index, note in
-                     NavigationLink(destination: TodoDetailView(note: $notes[index])) {
-                        HStack(alignment: .center) {
-                             VStack(alignment: .leading) {
-                                 Text(formatDate(note.date))
-                                     .font(.title2)
-                             }
-                             Spacer()
-                         }
-                     }
-                 }
-             }
-             .listStyle(.inset)
+                    ForEach(notes, id: \.self) { note in
+                        NavigationLink(destination: TodoDetailView(note: note)) {
+                            HStack(alignment: .center) {
+                                VStack(alignment: .leading) {
+                                    Text(formatDate(note.date))
+                                }
+                                Spacer()
+                            }
+                        }
+                    }
+                    .onDelete(perform: deleteNote)
+                }
+                .onAppear {
+                    notes = loadAllNotes()
+                }
              .padding(.top)
-             .navigationTitle("Notes List")
-             .searchable(text: $searchText)
+             .navigationTitle("Note List")
+            
              .toolbar {
                  ToolbarItem(placement: .navigationBarTrailing) {
-                     Button(action: { showCalendar = true }) {
-                         Image(systemName: "calendar")
-                     }
+                     NavigationLink(destination: AddNote()){
+                             Image(systemName: "plus.app")
+                         }
                  }
              }
-             .background(
-                NavigationLink(destination: CalendarSelectorView(notes: notes), isActive: $showCalendar) {
-                    EmptyView()
-                }
-
-             )
          }
      }
-
-
-    private func notesForToday() -> Note {
-         let today = Date()
-         return notes.first(where: { Calendar.current.isDate($0.date, inSameDayAs: today) })
-                ?? Note(id: UUID(), title: "", date: today, content: nil)
-     }
-    
-    private func isNotesTodays() -> Bool{
-        let today = Date()
-        if let note = notes.first(where: { Calendar.current.isDate($0.date, inSameDayAs: today) }) {
-           return true
-        } else {
-            return false
-        }
-    }
-
-   
     private func formatDate(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         formatter.timeStyle = .short
         return formatter.string(from: date)
     }
+    
+    func loadAllNotes() -> [Note] {
+        var notes: [Note] = []
+        
+        let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        
+        do {
+            let fileURLs = try FileManager.default.contentsOfDirectory(at: documentsDirectory, includingPropertiesForKeys: nil)
+            
+            // Filtrer les fichiers JSON qui n'ont pas "secret" dans leur nom
+            let jsonFiles = fileURLs.filter { $0.pathExtension == "json" && !$0.lastPathComponent.contains("secret") }
+            
+            for fileURL in jsonFiles {
+                let data = try Data(contentsOf: fileURL)
+                
+                let decoder = JSONDecoder()
+                
+                if let note = try? decoder.decode(Note.self, from: data) {
+                    notes.append(note)
+                }
+            }
+        } catch {
+            print("Erreur lors du chargement des notes secrètes: \(error)")
+        }
+        return notes
+    }
+
+    
+    func deleteNote(at offsets: IndexSet) {
+        for index in offsets {
+            let note = notes[index]
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyyMMdd_HHmmss"
+            let dateString = dateFormatter.string(from: note.date)
+            let fileName = "\(dateString).json"
+            
+            if let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+                let fileURL = documentsDirectory.appendingPathComponent(fileName)
+                
+                do {
+                    try FileManager.default.removeItem(at: fileURL)
+                    print("Note supprimée : \(fileURL)")
+                } catch {
+                    print("Erreur lors de la suppression de la note : \(error)")
+                }
+            }
+        }
+        notes.remove(atOffsets: offsets)
+    }
+
+
 }
 
-struct Notes_preview: PreviewProvider {
+struct NotesView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        NotesView()
     }
 }

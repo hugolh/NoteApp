@@ -52,7 +52,7 @@ struct SecretView: View {
         do {
             let fileURLs = try FileManager.default.contentsOfDirectory(at: documentsDirectory, includingPropertiesForKeys: nil)
             
-           let jsonFiles = fileURLs.filter { $0.pathExtension == "json" }
+            let jsonFiles = fileURLs.filter { $0.pathExtension == "json" && $0.lastPathComponent.contains("secret") }
             
             for fileURL in jsonFiles {
                 let data = try Data(contentsOf: fileURL)

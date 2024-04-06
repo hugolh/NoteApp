@@ -8,23 +8,18 @@
 import SwiftUI
 
 struct TodoDetailView: View {
-    @Binding var note: Note
+    var note: Note
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            TextField("Titre", text: $note.title)
+            Text( note.title)
                 .font(.title)
             
             Text(formatDate(note.date))
                 .font(.subheadline)
                 .foregroundColor(.gray)
             
-            TextEditor(text: Binding<String>(
-                get: { self.note.content ?? "" },
-                set: { self.note.content = $0 }
-            ))
-                .padding()
-                .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.gray, lineWidth: 1))
+            Text(note.content ?? "")
         }
         .padding()
         .navigationTitle("Todo Details")

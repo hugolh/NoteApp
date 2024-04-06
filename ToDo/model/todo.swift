@@ -10,7 +10,7 @@ import Foundation
 
 
 
-struct Note: Identifiable, Hashable {
+struct Note: Identifiable, Codable, Hashable {
     let id: UUID
     var title: String
     let date: Date

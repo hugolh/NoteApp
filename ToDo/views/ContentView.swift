@@ -15,11 +15,11 @@ struct ContentView: View {
 
      var body: some View {
          TabView {
-          /*   NotesView(selectedNote: newNote)
+             NotesView()
                  .tabItem {
                      Label("Notes", systemImage: "note.text")
                  }
-*/
+
              AuthView()
                  .tabItem {
                      Label("Notes Secrètes", systemImage: "lock.doc")
