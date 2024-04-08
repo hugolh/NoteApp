@@ -10,8 +10,8 @@ import Foundation
 import SwiftUI
 import CryptoKit
 
-struct AddNote: View {
-    @State private var notes: [Note] = []
+struct AddNoteView: View {
+    @State private var notes: [NoteModel] = []
     @State private var title: String = ""
     @State private var content: String = ""
     @State private var isStar: Bool = false
@@ -52,11 +52,10 @@ struct AddNote: View {
     func saveNoteAsJson() {
         
         guard content.data(using: .utf8) != nil else {
-            print("Erreur lors de la conversion du contenu en Data.")
             return
         }
         
-        let newNote = Note(id: UUID(), title: title, date: Date(), content: content, isStar: isStar)
+        let newNote = NoteModel(id: UUID(), title: title, date: Date(), content: content, isStar: isStar)
           
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyyMMdd_HHmmss"
@@ -68,9 +67,9 @@ struct AddNote: View {
             do {
                 let data = try JSONEncoder().encode(newNote)
                 try data.write(to: fileURL, options: [.atomicWrite, .completeFileProtection])
-                print("Note sauvegardée : \(fileURL)")
+                print("Note save : \(fileURL)")
             } catch {
-                print("Erreur lors de la sauvegarde de la note : \(error)")
+                print("Error on save note : \(error)")
             }
         }
         presentationMode.wrappedValue.dismiss()

@@ -10,7 +10,7 @@ struct ContentView: View {
     @State private var searchText: String = ""
      @State private var hideEmpty: Bool = false
      @State private var showCalendar: Bool = false
-     let newNote = Note(id: UUID(), title: "", date: Date(), content: "")
+     let newNote = NoteModel(id: UUID(), title: "", date: Date(), content: "")
    
 
      var body: some View {
@@ -22,7 +22,7 @@ struct ContentView: View {
 
              AuthView()
                  .tabItem {
-                     Label("Notes Secrètes", systemImage: "lock.doc")
+                     Label("Secret notes", systemImage: "lock.doc")
                  }
          }
      }

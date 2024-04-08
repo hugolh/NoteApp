@@ -7,13 +7,13 @@
 
 import SwiftUI
 
-struct TodoDetailView: View {
-    var note: Note
+struct NoteDetailView: View {
+    var note: NoteModel
     @State private var title: String
     @State private var content: String?
     @State private var isStar: Bool
 
-    init(note: Note) {
+    init(note: NoteModel) {
         self.note = note
         _title = State(initialValue: note.title)
         _content = State(initialValue: note.content)
@@ -28,7 +28,7 @@ struct TodoDetailView: View {
             
             TextEditor(text: Binding<String>(get: { content ?? "" }, set: { content = $0 }))
                     .frame(minHeight: 200)
-                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.gray, lineWidth: 1)) 
+                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.gray, lineWidth: 1))
                     .padding(.bottom, 20)
                 
             Spacer()
@@ -69,12 +69,12 @@ struct TodoDetailView: View {
     }
     
     private func saveNote() {
-        let updatedNote = Note(id: note.id, title: title, date: note.date, content: content, isStar: isStar)
+        let updatedNote = NoteModel(id: note.id, title: title, date: note.date, content: content, isStar: isStar)
           
-           saveNoteToFile(note: updatedNote)
+           saveNoteToFile(newNote: updatedNote)
        }
        
-       private func saveNoteToFile(note: Note) {
+       private func saveNoteToFile(newNote: NoteModel) {
            let dateFormatter = DateFormatter()
            dateFormatter.dateFormat = "yyyyMMdd_HHmmss"
            let dateString = dateFormatter.string(from: note.date)
@@ -88,7 +88,7 @@ struct TodoDetailView: View {
            let fileURL = documentsDirectory.appendingPathComponent(fileName)
            
            do {
-               let data = try JSONEncoder().encode(note)
+               let data = try JSONEncoder().encode(newNote)
                try data.write(to: fileURL, options: [.atomicWrite, .completeFileProtection])
                print("Note updated: \(fileURL)")
            } catch {

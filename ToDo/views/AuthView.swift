@@ -18,7 +18,7 @@ struct AuthView: View {
                 if isAuthenticated {
                     SecretView()
                 } else {
-                    Button("S'authentifier avec Face ID") {
+                    Button("Identification with Face ID") {
                         authenticate()
                     }
                 }
@@ -31,7 +31,7 @@ struct AuthView: View {
         var error: NSError?
 
         if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
-            let reason = "Identifiez-vous pour accéder à vos notes secrètes."
+            let reason = "Need identification for access to securised notes."
 
             context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) { success, authenticationError in
                 DispatchQueue.main.async {

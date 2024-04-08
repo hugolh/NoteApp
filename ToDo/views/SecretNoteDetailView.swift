@@ -20,29 +20,28 @@ struct SecretNoteDetailView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            if let content = secret.content {
-                Text(displayedText)
-                Button(action: {
-                  
-                    displayedText = decrypt(content: content) ?? "Erreur de décryptage"
-                }) {
-                    Image(systemName: "eye.slash")
-                }
-            }
-        }
-        .padding()
-        .navigationTitle("\(secret.title)")
-        .toolbar {
-            ToolbarItem(placement: .principal) {
-                VStack {
-                    Text(formatDate(secret.date))
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
-                }
-            }
-        }
-    }
+           VStack(alignment: .leading, spacing: 10) {
+               Text(displayedText)
+                   .padding()
+           }
+           .navigationTitle("\(secret.title)")
+           .navigationBarItems(trailing: Button(action: {
+               displayedText = decrypt(content: secret.content ?? "") ?? "Error on decrypt"
+           }) {
+               Image(systemName: "eye.slash")
+                   .imageScale(.large)
+           })
+           .toolbar {
+               ToolbarItem(placement: .principal) {
+                   VStack {
+                       Text(formatDate(secret.date))
+                           .font(.subheadline)
+                           .foregroundColor(.gray)
+                   }
+               }
+           }
+       }
+
 
     
     private func formatDate(_ date: Date) -> String {

@@ -8,7 +8,7 @@ import Foundation
 import SwiftUI
 import CryptoKit
 
-struct AddSecretNote: View {
+struct AddSecretNoteView: View {
     @State private var notes: [SecretNoteModel] = []
     @State private var title: String = ""
     @State private var content: String = ""
@@ -35,12 +35,10 @@ struct AddSecretNote: View {
     
     func saveNoteAsJson(note: SecretNoteModel) {
         guard let content = note.content else {
-            print("La note est vide, rien à hacher.")
             return
         }
         
         guard content.data(using: .utf8) != nil else {
-            print("Erreur lors de la conversion du contenu en Data.")
             return
         }
         
@@ -55,9 +53,9 @@ struct AddSecretNote: View {
             do {
                 let data = try JSONEncoder().encode(newNote)
                 try data.write(to: fileURL, options: [.atomicWrite, .completeFileProtection])
-                print("Note sauvegardée : \(fileURL)")
+                print("Note saved : \(fileURL)")
             } catch {
-                print("Erreur lors de la sauvegarde de la note : \(error)")
+                print("Error on save note : \(error)")
             }
         }
     }

@@ -10,10 +10,13 @@ import SwiftUI
 import LocalAuthentication
 
 struct NotesView: View {
-    @State private var notes = [Note]()
+    @State private var notes = [NoteModel]()
     @State private var searchText = ""
+    @State private var selectedTab: Int = 0
+    @State private var isShowingDetailView = false
+    @State private var showingAddNoteView = false
 
-    private var filteredNotes: [Note] {
+    private var filteredNotes: [NoteModel] {
         if searchText.isEmpty {
             return notes
         } else {
@@ -21,25 +24,31 @@ struct NotesView: View {
         }
     }
 
-    private var starredNotes: [Note] {
+    private var starredNotes: [NoteModel] {
         filteredNotes.filter { $0.isStar ?? false }
     }
     
-    private var nonStarredNotes: [Note] {
+    private var nonStarredNotes: [NoteModel] {
         filteredNotes.filter { !($0.isStar ?? false) }
     }
 
     var body: some View {
-        TabView {
-            notesListView(notes: nonStarredNotes, title: "Note List")
-                .tabItem {
-                    Label("Notes", systemImage: "list.bullet")
+        VStack {
+            if !isShowingDetailView {
+                
+                Picker("Tabs", selection: $selectedTab) {
+                    Text("Notes").tag(0)
+                    Text("Starred").tag(1)
                 }
-            
-            notesListView(notes: starredNotes, title: "Starred Notes")
-                .tabItem {
-                    Label("Starred", systemImage: "star.fill")
-                }
+                .pickerStyle(SegmentedPickerStyle())
+                .padding()
+            }
+            // Conditionally display content based on the selected tab
+            if selectedTab == 0 {
+                notesListView(notes: nonStarredNotes, title: "Note List")
+            } else {
+                notesListView(notes: starredNotes, title: "Starred Notes")
+            }
         }
         .searchable(text: $searchText)
         .onAppear {
@@ -47,11 +56,11 @@ struct NotesView: View {
         }
     }
 
-    private func notesListView(notes: [Note], title: String) -> some View {
+    private func notesListView(notes: [NoteModel], title: String) -> some View {
         NavigationView {
             List {
                 ForEach(notes, id: \.self) { note in
-                    NavigationLink(destination: TodoDetailView(note: note)) {
+                    NavigationLink(destination: NoteDetailView(note: note)) {
                         NoteRow(note: note)
                     }
                 }
@@ -60,8 +69,11 @@ struct NotesView: View {
             .navigationTitle(title)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    NavigationLink(destination: AddNote()) {
-                        Image(systemName: "plus.app")
+                    Button("Add Note") {
+                        showingAddNoteView = true
+                    }
+                    .sheet(isPresented: $showingAddNoteView) {
+                        AddNoteView()
                     }
                 }
             }
@@ -69,8 +81,8 @@ struct NotesView: View {
     }
 
     
-    func loadAllNotes() -> [Note] {
-        var notes: [Note] = []
+    func loadAllNotes() -> [NoteModel] {
+        var notes: [NoteModel] = []
 
         let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
 
@@ -84,12 +96,12 @@ struct NotesView: View {
 
                 let decoder = JSONDecoder()
 
-                if let note = try? decoder.decode(Note.self, from: data) {
+                if let note = try? decoder.decode(NoteModel.self, from: data) {
                     notes.append(note)
                 }
             }
         } catch {
-            print("Erreur lors du chargement des notes: \(error)")
+            print("Error loading notes : \(error)")
         }
 
         notes.sort { $0.date > $1.date }
@@ -112,9 +124,9 @@ struct NotesView: View {
                 
                 do {
                     try FileManager.default.removeItem(at: fileURL)
-                    print("Note supprimée : \(fileURL)")
+                    print("Note deleted : \(fileURL)")
                 } catch {
-                    print("Erreur lors de la suppression de la note : \(error)")
+                    print("Error deleting note : \(error)")
                 }
             }
         }
@@ -132,7 +144,7 @@ struct NotesView_Previews: PreviewProvider {
 
 
 struct NoteRow: View {
-    let note: Note
+    let note: NoteModel
     
     var body: some View {
         HStack(alignment: .center) {

@@ -36,7 +36,7 @@ struct SecretView: View {
             .navigationTitle("Secret Note List")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    NavigationLink(destination: AddSecretNote()){
+                    NavigationLink(destination: AddSecretNoteView()){
                         Image(systemName: "plus.app")
                     }
                 }
@@ -76,10 +76,9 @@ struct SecretView: View {
                 }
             }
         } catch {
-            print("Erreur lors du chargement des notes secrètes: \(error)")
+            print("Error on loading: \(error)")
         }
-        print("Répertoire Documents : \(documentsDirectory.path)")
-        print(secretNotes)
+       
         return secretNotes
     }
     
@@ -96,9 +95,9 @@ struct SecretView: View {
                 
                 do {
                     try FileManager.default.removeItem(at: fileURL)
-                    print("Note supprimée : \(fileURL)")
+                    print("Note deleted : \(fileURL)")
                 } catch {
-                    print("Erreur lors de la suppression de la note : \(error)")
+                    print("Error on deleting on note : \(error)")
                 }
             }
         }
