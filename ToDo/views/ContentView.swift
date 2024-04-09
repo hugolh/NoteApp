@@ -10,59 +10,22 @@ struct ContentView: View {
     @State private var searchText: String = ""
      @State private var hideEmpty: Bool = false
      @State private var showCalendar: Bool = false
+     let newNote = NoteModel(id: UUID(), title: "", date: Date(), content: "")
+   
 
      var body: some View {
-         NavigationView {
-             List {
-                 Toggle(isOn: $hideEmpty) {
-                     Text("Hide Empty Todos")
+         TabView {
+             NotesView()
+                 .tabItem {
+                     Label("Notes", systemImage: "note.text")
                  }
-                 .padding()
 
-                 ForEach(filteredTodos, id: \.self) { todo in
-                     NavigationLink(destination: TodoDetailView(todo: todo)) {
-                         HStack(alignment: .center) {
-                             VStack(alignment: .leading) {
-                                 Text(formatDate(todo.date))
-                                     .font(.title2)
-                             }
-                             Spacer()
-                         }
-                     }
+             AuthView()
+                 .tabItem {
+                     Label("Secret notes", systemImage: "lock.doc")
                  }
-             }
-             .listStyle(.inset)
-             .padding(.top)
-             .navigationTitle("Todo List")
-             .searchable(text: $searchText)
-             .toolbar {
-                 ToolbarItem(placement: .navigationBarTrailing) {
-                     Button(action: { showCalendar = true }) {
-                         Image(systemName: "calendar")
-                     }
-                 }
-             }
-             .background(
-                 NavigationLink(destination: CalendarView(todos: todos), isActive: $showCalendar) { EmptyView() }
-             )
          }
      }
-
-
-    private var filteredTodos: [Todo] {
-        todos.filter { todo in
-            (!hideEmpty || (todo.content != nil && !todo.content!.isEmpty)) &&
-            (searchText.isEmpty || todo.content!.contains(searchText) || (todo.content?.contains(searchText) ?? false))
-        }
-    }
-
-   
-    private func formatDate(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .short
-        return formatter.string(from: date)
-    }
 }
 
 struct ContentView_Previews: PreviewProvider {
