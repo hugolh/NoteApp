@@ -1,10 +1,10 @@
 # Personal project for personal use
 
-## Contains or will contains
+## Contains
 ### 1
 Global notes space for notes filtered by days
 
-Calendar which highligh where a note has made
+Important notes tab
 
 Filter bar on notes content
 
